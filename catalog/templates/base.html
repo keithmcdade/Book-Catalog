@@ -1,0 +1,39 @@
+<!doctype html>
+
+{% if g.user %}
+<title>{% block title %}{% endblock %} - Book Catalog</title>
+{% else %}
+<title>{% block title_no_login %}Book Catalog{% endblock %}</title>
+{% endif %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<nav class="topnav">
+  <div>
+    <ul>
+      <div>
+        <h1>Book Catalog</h1>
+      </div>
+      {% if g.user %}
+        <a href="{{ url_for('auth.logout') }}">Log Out</a>
+        <a class="action" href="{{ url_for('dashboard.search') }}">Search</a>
+        <a class="action" href="{{ url_for('index') }}">Home</a>
+        <a class="disabled" :hover>{{ g.user['username'] }}</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Log In</a>
+        <a href="{{ url_for('auth.register') }}">Register</a>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+<section class="content">
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% block content %}{% endblock %}
+  
+  
+  
+</section>

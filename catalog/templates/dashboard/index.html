@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% if g.user %}
+    <h1>{% block title %}{{g.user['username']}}'s Catalog{% endblock %}</h1>
+  {% endif %}
+  {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}    
+{% endblock %}
+
+{% block content %}
+  {% if g.user %}
+    <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Page Count</th>
+            <th>Rating</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>  
+        {% for book in books %}
+          <tr>
+            <td>{{ book['title'] }}</td>
+            <td>{{ book['author'] }}</td>
+            <td>{{ book['isbn'] }}</td>
+            <td>{{ book['page_count'] }}</td>
+            <td>{{ book['rating'] }}</td>
+            <td>
+              <form action="{{ url_for('dashboard.delete', isbn=book['isbn']) }}" method="post">
+                <input type="submit" value="Delete">
+              </form>
+              </td>           
+          </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+  {% endif %}   
+{% endblock %}
+
+<!--
+  <input type="checkbox" name="delete" value="Delete">
+  <label>Delete</label>
+   href="{{ url_for('dashboard.delete', isbn=book['isbn']) }}"
+
+  th {
+    cursor: pointer;
+  }    
+-->

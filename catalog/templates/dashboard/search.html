@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1 class="searchpage">{% block title %}Book Search{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <div class="searchpage">  
+    <form method="post">
+        <label for="search">Search Google Books</label>
+            <br>
+        <input name="search" id="search" required>
+            <br>
+        <input type="submit" value="submit">
+    </form>
+    <br>
+  </div>
+  <div class="searchresults">
+    {% if query %}
+    {% if book %}
+        <p>displaying results for {{ query }}:</p><br>
+        <p>{{ book.title }} by {{ book.authors }}</p>
+        <form action="{{ url_for('dashboard.catalog_book', isbn=book.isbn) }}" method="post">
+          <p><input type="submit" value="add"></p>
+        </form>
+    {% endif %}
+    {% endif %}
+  </div> 
+  {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}                                          
+{% endblock %}
