@@ -1,7 +1,5 @@
 from catalog.__init__ import create_app
-from catalog.db import init_db
 import argparse
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="""This is a web app built with flask,

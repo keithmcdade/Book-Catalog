@@ -1,13 +1,10 @@
-from flask import Flask, session,  redirect, url_for, request, current_app, g
+from flask import Flask
 import catalog.config
-import sqlite3
 import os
 from pathlib import Path
 
-
 project_folder = Path(__file__).parent.parent.resolve()
 instance_folder = project_folder / 'instance'
-
 
 # this app factory function copied from flask documention
 def create_app(test_config=None):
@@ -46,7 +43,6 @@ def create_app(test_config=None):
     app.add_url_rule('/', endpoint='index')
     
     return app
-
     
 # flask --app catalog run 
 # flask --app catalog run --debug

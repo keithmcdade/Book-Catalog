@@ -1,18 +1,13 @@
-from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, session
-)
-from werkzeug.exceptions import abort
+from flask import Blueprint, flash, redirect, render_template, request, session
 from catalog.auth import login_required
 from catalog.db import get_db
 import catalog.config
 import requests
 import json
 
-
 bp = Blueprint('dashboard', __name__)
 # API key not included, get your own!
 API_key = catalog.config.api_key
-
 
 # shows user book catalog
 @bp.route('/')
@@ -21,15 +16,13 @@ def index():
     if session.get('user_id'):
         
         user_id = int(session.get('user_id'))
-        print(user_id)
         sql = 'SELECT * FROM books WHERE user_id=?;'
         db = get_db()
         books = db.execute(sql, (user_id,)).fetchall()
-        return render_template('dashboard/index.html', books=books) 
+        return render_template('dashboard/index.html', books=books)
     
     else:
         return render_template('dashboard/index.html')
-        
 
 # deletes book from catalog when 'delete' button is clicked
 @bp.route('/delete', methods=['GET', 'POST'])
@@ -37,7 +30,6 @@ def delete():
     
     if request.method == "POST":
         user_id = int(session.get('user_id'))
-        print(user_id)
         isbn = int(request.args['isbn'])
         sql = 'DELETE FROM books WHERE isbn=? AND user_id=?;'
         db = get_db()
@@ -47,7 +39,6 @@ def delete():
     
     else:
         return redirect('/')
-
 
 # handles passing search query value to functions 
 # for searching Google Books and parsing json 
@@ -72,7 +63,6 @@ def search():
     else:
         return render_template('dashboard/search.html')
 
-
 # adds book when "add" button on /search page is clicked
 @bp.route('/search/add', methods=('GET', 'POST'))
 def catalog_book():
@@ -90,22 +80,21 @@ def catalog_book():
             if isbn == book.isbn and user_id == book.user_id:
                 add_book(book)
                 return redirect('/')
-            
 
 # book class for easier handling of books between views
 class Book():
     
     books = []
     
-    def __init__(self, isbn, title, authors, page_count, rating, user_id):
+    # def __init__(self, isbn, title, authors, page_count, user_id):  # TODO remove rating
+    def __init__(self, isbn, title, authors, page_count, rating, user_id):  # TODO remove rating
         self.isbn = isbn
         self.title = title
         self.authors = authors
         self.page_count = page_count
-        self.rating = rating
+        self.rating = rating  # TODO remove
         self.user_id = user_id    
         Book.books.append(self)
-        
 
 # following functions for handling book database
 #  --
@@ -116,7 +105,6 @@ def get_books():
     sql = '''SELECT *
              FROM books'''
     return db.execute(sql).fetchall()
-     
 
 # add_book inserts book into sql database
 def add_book(book):
@@ -127,11 +115,10 @@ def add_book(book):
                  book.title,
                  book.authors,
                  book.page_count,
-                 book.rating,
+                 book.rating, # TODO remove
                  book.user_id)
     db.execute(sql, book_info)
-    db.commit()       
-
+    db.commit()
 
 # book_exists checks sql database by isbn, 
 # returns bool on whether book is already cataloged 
@@ -146,7 +133,6 @@ def book_exists(isbn):
             return True
         else:
             return False
-        
 
 # calls functions for calling functions for getting 
 # required book info and returning it as a list
@@ -156,9 +142,8 @@ def get_book_info(book_data):
             book_data['title'], 
             get_authors(book_data['authors']),
             get_pageCount(book_data), 
-            None,
+            None,  # TODO remove
             user_id)  
-                
 
 # following functions process json from Google Books API
 # --
@@ -181,14 +166,12 @@ def get_volumeInfo(query):
     book_data = json_data['items'][0]['volumeInfo']
     return book_data
 
-
 # get_isbn returns book isbn, currently only supports isbn 13
 def get_isbn(book_data):
     
     for item in book_data['industryIdentifiers']:
         if item['type'] == "ISBN_13":
             return int(item['identifier'])
-        
 
 # get_pageCount returns book's page count
 def get_pageCount(book_data):
@@ -197,7 +180,6 @@ def get_pageCount(book_data):
         return book_data['pageCount']
     else:
         return None
-
 
 # get_authors returns authors. 
 def get_authors(author_list):    
