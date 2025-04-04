@@ -6,7 +6,6 @@ from pathlib import Path
 project_folder = Path(__file__).parent.parent.resolve()
 instance_folder = project_folder / 'instance'
 
-# this app factory function copied from flask documention
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
